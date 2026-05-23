@@ -22,12 +22,13 @@ function Register() {
     <div>
       <h2>Register</h2>
       <form onSubmit={handleSubmit}>
-        <input type="text" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} required />
+        <input type="text" placeholder="Name (Hub or Farmer Name)" value={name} onChange={(e) => setName(e.target.value)} required />
         <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
         <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         <select value={role} onChange={(e) => setRole(e.target.value)}>
           <option value="RETAILER">Retailer</option>
           <option value="FARMER">Farmer</option>
+          <option value="HUB">Collection Hub</option>
         </select>
         <button type="submit">Register</button>
       </form>

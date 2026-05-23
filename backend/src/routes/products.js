@@ -19,9 +19,11 @@ const authenticate = (req, res, next) => {
 };
 
 router.post('/', authenticate, async (req, res) => {
-  if (req.user.role !== 'FARMER') return res.status(403).json({ error: 'Unauthorized' });
+  if (req.user.role !== 'FARMER' && req.user.role !== 'HUB') {
+    return res.status(403).json({ error: 'Unauthorized' });
+  }
   try {
-    const { name, description, price, unit, quantity } = req.body;
+    const { name, description, price, unit, quantity, sourceFarmerName } = req.body;
     const product = await prisma.product.create({
       data: {
         name,
@@ -29,6 +31,7 @@ router.post('/', authenticate, async (req, res) => {
         price: parseFloat(price),
         unit,
         quantity: parseInt(quantity),
+        sourceFarmerName: req.user.role === 'HUB' ? sourceFarmerName : null,
         farmerId: req.user.userId,
       },
     });

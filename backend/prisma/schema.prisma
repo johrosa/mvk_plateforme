@@ -12,21 +12,22 @@ model User {
   email     String   @unique
   password  String
   name      String?
-  role      String
+  role      String   // "FARMER", "RETAILER", or "HUB"
   products  Product[]
   orders    Order[]
 }
 
 model Product {
-  id          Int      @id @default(autoincrement())
-  name        String
-  description String?
-  price       Float
-  unit        String
-  quantity    Int
-  farmer      User     @relation(fields: [farmerId], references: [id])
-  farmerId    Int
-  orders      Order[]
+  id               Int      @id @default(autoincrement())
+  name             String
+  description      String?
+  price            Float
+  unit             String
+  quantity         Int
+  sourceFarmerName String?  // Used when a HUB adds products for a farmer without a smartphone
+  farmer           User     @relation(fields: [farmerId], references: [id])
+  farmerId         Int
+  orders           Order[]
 }
 
 model Order {
@@ -37,6 +38,6 @@ model Order {
   buyerId   Int
   quantity  Int
   total     Float
-  status    String
+  status    String   // "PENDING", "COMPLETED", "CANCELLED"
   createdAt DateTime @default(now())
 }

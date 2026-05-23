@@ -13,7 +13,7 @@ function App() {
     <Router>
       <nav>
         {!user ? (<> <Link to="/login">Login</Link> | <Link to="/register">Register</Link> </>) : (<>
-          {user.role === 'FARMER' ? <Link to="/farmer">Dashboard</Link> : <Link to="/marketplace">Marketplace</Link>}
+          {(user.role === 'FARMER' || user.role === 'HUB') ? <Link to="/farmer">Dashboard</Link> : <Link to="/marketplace">Marketplace</Link>}
           | <button onClick={logout}>Logout</button>
         </>)}
       </nav>
