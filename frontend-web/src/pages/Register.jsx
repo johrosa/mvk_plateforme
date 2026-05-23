@@ -13,24 +13,24 @@ function Register() {
     e.preventDefault();
     try {
       await api.post('/auth/register', { email, password, name, role });
-      alert('Registration successful!');
+      alert('Inscription réussie !');
       navigate('/login');
-    } catch (error) { alert('Registration failed'); }
+    } catch (error) { alert("Échec de l'inscription"); }
   };
 
   return (
     <div>
-      <h2>Register</h2>
+      <h2>Inscription</h2>
       <form onSubmit={handleSubmit}>
-        <input type="text" placeholder="Name (Hub or Farmer Name)" value={name} onChange={(e) => setName(e.target.value)} required />
+        <input type="text" placeholder="Nom complet" value={name} onChange={(e) => setName(e.target.value)} required />
         <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+        <input type="password" placeholder="Mot de passe" value={password} onChange={(e) => setPassword(e.target.value)} required />
         <select value={role} onChange={(e) => setRole(e.target.value)}>
-          <option value="RETAILER">Retailer</option>
-          <option value="FARMER">Farmer</option>
-          <option value="HUB">Collection Hub</option>
+          <option value="RETAILER">Commerçant</option>
+          <option value="FARMER">Paysan</option>
+          <option value="HUB">Hub de collecte</option>
         </select>
-        <button type="submit">Register</button>
+        <button type="submit">S'inscrire</button>
       </form>
     </div>
   );

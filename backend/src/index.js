@@ -18,4 +18,8 @@ app.use('/api/orders', orderRoutes);
 
 app.get('/', (req, res) => res.send('API running'));
 
+if (!process.env.JWT_SECRET) {
+  console.warn('WARNING: JWT_SECRET not set in environment variables');
+}
+
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

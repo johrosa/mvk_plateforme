@@ -7,10 +7,10 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>MVK Login</Text>
+      <Text style={styles.title}>Connexion MVK</Text>
       <TextInput style={styles.input} placeholder="Email" value={email} onChangeText={setEmail} />
-      <TextInput style={styles.input} placeholder="Password" secureTextEntry value={password} onChangeText={setPassword} />
-      <Button title="Login" onPress={() => navigation.navigate('Products')} />
+      <TextInput style={styles.input} placeholder="Mot de passe" secureTextEntry value={password} onChangeText={setPassword} />
+      <Button title="Se connecter" onPress={() => navigation.navigate('Produits')} />
     </View>
   );
 }

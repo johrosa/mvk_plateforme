@@ -8,23 +8,23 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your_fallback_secret';
 
 const authenticate = (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
-  if (!token) return res.status(401).json({ error: 'No token' });
+  if (!token) return res.status(401).json({ error: 'Aucun jeton' });
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
     req.user = decoded;
     next();
   } catch (error) {
-    res.status(401).json({ error: 'Invalid token' });
+    res.status(401).json({ error: 'Jeton invalide' });
   }
 };
 
 router.post('/', authenticate, async (req, res) => {
-  if (req.user.role !== 'RETAILER') return res.status(403).json({ error: 'Unauthorized' });
+  if (req.user.role !== 'RETAILER') return res.status(403).json({ error: 'Non autorisé' });
   try {
     const { productId, quantity } = req.body;
     const product = await prisma.product.findUnique({ where: { id: productId } });
     if (!product || product.quantity < quantity) {
-      return res.status(400).json({ error: 'Product not available' });
+      return res.status(400).json({ error: 'Produit non disponible ou quantité insuffisante' });
     }
 
     const total = product.price * quantity;
@@ -39,7 +39,7 @@ router.post('/', authenticate, async (req, res) => {
     ]);
     res.status(201).json(order[0]);
   } catch (error) {
-    res.status(400).json({ error: 'Failed to place order' });
+    res.status(400).json({ error: 'Échec de la commande' });
   }
 });
 
@@ -53,7 +53,7 @@ router.get('/', authenticate, async (req, res) => {
     });
     res.json(orders);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch orders' });
+    res.status(500).json({ error: 'Échec de la récupération des commandes' });
   }
 });
 

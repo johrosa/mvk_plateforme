@@ -24,6 +24,7 @@ model Product {
   price            Float
   unit             String
   quantity         Int
+  imageUrl         String?  // New field for product photo
   sourceFarmerName String?  // Used when a HUB adds products for a farmer without a smartphone
   farmer           User     @relation(fields: [farmerId], references: [id])
   farmerId         Int

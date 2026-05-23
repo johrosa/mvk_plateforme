@@ -12,9 +12,9 @@ function App() {
   return (
     <Router>
       <nav>
-        {!user ? (<> <Link to="/login">Login</Link> | <Link to="/register">Register</Link> </>) : (<>
-          {(user.role === 'FARMER' || user.role === 'HUB') ? <Link to="/farmer">Dashboard</Link> : <Link to="/marketplace">Marketplace</Link>}
-          | <button onClick={logout}>Logout</button>
+        {!user ? (<> <Link to="/login">Connexion</Link> | <Link to="/register">Inscription</Link> </>) : (<>
+          {(user.role === 'FARMER' || user.role === 'HUB') ? <Link to="/farmer">Tableau de Bord</Link> : <Link to="/marketplace">Marché</Link>}
+          | <button onClick={logout}>Déconnexion</button>
         </>)}
       </nav>
       <Routes>
@@ -22,7 +22,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/farmer" element={<FarmerDashboard />} />
         <Route path="/marketplace" element={<Marketplace />} />
-        <Route path="/" element={<h2>Welcome</h2>} />
+        <Route path="/" element={<h2>Bienvenue sur MVK Plateforme</h2>} />
       </Routes>
     </Router>
   );
