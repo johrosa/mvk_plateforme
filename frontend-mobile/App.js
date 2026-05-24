@@ -6,6 +6,7 @@ import ProductListScreen from './screens/ProductListScreen';
 import DriverScreen from './screens/DriverScreen';
 import HubScreen from './screens/HubScreen';
 import StockScreen from './screens/StockScreen';
+import SalesRepScreen from './screens/SalesRepScreen';
 
 const Stack = createStackNavigator();
 
@@ -18,6 +19,7 @@ export default function App() {
         <Stack.Screen name="Chauffeur" component={DriverScreen} />
         <Stack.Screen name="Hub" component={HubScreen} />
         <Stack.Screen name="Stock" component={StockScreen} />
+        <Stack.Screen name="SalesRep" component={SalesRepScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -7,7 +7,9 @@ import Marketplace from './pages/Marketplace';
 import AdminDashboard from './pages/AdminDashboard';
 import StockDashboard from './pages/StockDashboard';
 import HubManagerDashboard from './pages/HubManagerDashboard';
-import { LogOut, Home, LayoutDashboard, ShoppingCart, ShieldCheck, Warehouse, MapPin } from 'lucide-react';
+import SalesRepDashboard from './pages/SalesRepDashboard';
+import DriverDashboard from './pages/DriverDashboard';
+import { LogOut, Home, LayoutDashboard, ShoppingCart, ShieldCheck, Warehouse, MapPin, Users, Truck } from 'lucide-react';
 
 function App() {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
@@ -51,6 +53,18 @@ function App() {
                         Stocks
                       </Link>
                     )}
+                    {user.role === 'SALES_REP' && (
+                      <Link to="/sales-rep" className="text-gray-600 hover:text-green-600 font-medium flex items-center gap-1">
+                        <Users size={20} />
+                        Terrain
+                      </Link>
+                    )}
+                    {user.role === 'DRIVER' && (
+                      <Link to="/driver" className="text-gray-600 hover:text-green-600 font-medium flex items-center gap-1">
+                        <Truck size={20} />
+                        Livraisons
+                      </Link>
+                    )}
                     {(user.role === 'FARMER' || user.role === 'HUB') ? (
                       <Link to="/farmer" className="text-gray-600 hover:text-green-600 font-medium flex items-center gap-1">
                         <LayoutDashboard size={20} />
@@ -82,6 +96,8 @@ function App() {
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/stock" element={<StockDashboard />} />
             <Route path="/hub-manager" element={<HubManagerDashboard />} />
+            <Route path="/sales-rep" element={<SalesRepDashboard />} />
+            <Route path="/driver" element={<DriverDashboard />} />
             <Route path="/" element={
               <div className="text-center py-20">
                 <h1 className="text-5xl font-extrabold text-gray-900 mb-4">Connecter les paysans aux commerçants</h1>

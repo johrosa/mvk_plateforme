@@ -5,6 +5,8 @@ import { Users, Truck, Warehouse, Package, Settings, ChevronRight } from 'lucide
 function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('users');
   const [users, setUsers] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [drivers, setDrivers] = useState([]);
   const [transports, setTransports] = useState([]);
   const [storages, setStorages] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -19,6 +21,13 @@ function AdminDashboard() {
       if (activeTab === 'users') {
         const { data } = await api.get('/admin/users');
         setUsers(data);
+      } else if (activeTab === 'orders') {
+        const o = await api.get('/orders');
+        const u = await api.get('/admin/users');
+        const t = await api.get('/admin/transports');
+        setOrders(o.data);
+        setDrivers(u.data.filter(u => u.role === 'DRIVER'));
+        setTransports(t.data);
       } else if (activeTab === 'logistics') {
         const t = await api.get('/admin/transports');
         const s = await api.get('/admin/storages');
@@ -27,6 +36,13 @@ function AdminDashboard() {
       }
     } catch (err) { console.error(err); }
     setLoading(false);
+  };
+
+  const assignDelivery = async (orderId, driverId, transportId) => {
+    try {
+      await api.put(`/admin/delivery-assign/${orderId}`, { driverId, transportId });
+      fetchData();
+    } catch (err) { alert('Erreur d\'assignation'); }
   };
 
   return (
@@ -44,6 +60,12 @@ function AdminDashboard() {
           className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition ${activeTab === 'logistics' ? 'bg-green-600 text-white shadow-lg' : 'bg-white text-gray-600 hover:bg-gray-100'}`}
         >
           <Truck size={20} /> <span className="font-semibold">Logistique</span>
+        </button>
+        <button
+          onClick={() => setActiveTab('orders')}
+          className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition ${activeTab === 'orders' ? 'bg-green-600 text-white shadow-lg' : 'bg-white text-gray-600 hover:bg-gray-100'}`}
+        >
+          <Package size={20} /> <span className="font-semibold">Commandes</span>
         </button>
       </div>
 
@@ -79,6 +101,58 @@ function AdminDashboard() {
                         </span>
                       </td>
                       <td className="py-4 text-green-600 font-semibold cursor-pointer hover:underline italic">Modifier</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'orders' && (
+          <div>
+            <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+              <Package className="text-green-600" /> Suivi Global des Commandes
+            </h2>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b text-left text-gray-500 text-sm">
+                    <th className="pb-4 font-medium">Client / Boutique</th>
+                    <th className="pb-4 font-medium">Produit</th>
+                    <th className="pb-4 font-medium">Quantité</th>
+                    <th className="pb-4 font-medium">Prix Total</th>
+                    <th className="pb-4 font-medium">Placé par</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  {orders.map(o => (
+                    <tr key={o.id} className="text-gray-700">
+                      <td className="py-4 font-medium">{o.retailerName || o.buyer?.name || 'Inconnu'}</td>
+                      <td className="py-4">{o.product.name}</td>
+                      <td className="py-4 font-mono">{o.quantity}</td>
+                      <td className="py-4 font-bold text-green-600">{o.total}€</td>
+                      <td className="py-4 text-sm text-gray-500 italic">{o.placedBy?.name || 'Client Direct'}</td>
+                      <td className="py-4">
+                        <div className="flex flex-col gap-2">
+                          <select
+                            className="text-xs border rounded p-1"
+                            onChange={(e) => assignDelivery(o.id, parseInt(e.target.value), null)}
+                            defaultValue=""
+                          >
+                            <option value="">Assigner Chauffeur</option>
+                            {drivers.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
+                          </select>
+                          <select
+                            className="text-xs border rounded p-1"
+                            onChange={(e) => assignDelivery(o.id, null, parseInt(e.target.value))}
+                            defaultValue=""
+                          >
+                            <option value="">Assigner Véhicule</option>
+                            {transports.map(t => <option key={t.id} value={t.id}>{t.vehicleType} ({t.plateNumber})</option>)}
+                          </select>
+                        </div>
+                      </td>
                     </tr>
                   ))}
                 </tbody>

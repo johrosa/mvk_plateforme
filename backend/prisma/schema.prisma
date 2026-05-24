@@ -8,14 +8,15 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  password  String
-  name      String?
-  role      String   // "FARMER", "RETAILER", "HUB", "ADMIN", "DRIVER", or "STOCK_MANAGER"
-  products  Product[]
-  orders    Order[]
-  deliveries Delivery[] @relation("DriverDeliveries")
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  password     String
+  name         String?
+  role         String   // "FARMER", "RETAILER", "HUB", "ADMIN", "DRIVER", "STOCK_MANAGER", or "SALES_REP"
+  products     Product[]
+  orders       Order[]
+  placedOrders Order[]  @relation("OrderPlacer")
+  deliveries   Delivery[] @relation("DriverDeliveries")
 }
 
 model Product {
@@ -34,16 +35,19 @@ model Product {
 }
 
 model Order {
-  id        Int      @id @default(autoincrement())
-  product   Product  @relation(fields: [productId], references: [id])
-  productId Int
-  buyer     User     @relation(fields: [buyerId], references: [id])
-  buyerId   Int
-  quantity  Int
-  total     Float
-  status    String   // "PENDING", "COMPLETED", "CANCELLED"
-  createdAt DateTime @default(now())
-  delivery  Delivery?
+  id           Int      @id @default(autoincrement())
+  product      Product  @relation(fields: [productId], references: [id])
+  productId    Int
+  buyer        User?    @relation(fields: [buyerId], references: [id])
+  buyerId      Int?
+  placedBy     User?    @relation("OrderPlacer", fields: [placedById], references: [id])
+  placedById   Int?
+  retailerName String?
+  quantity     Int
+  total        Float
+  status       String   // "PENDING", "COMPLETED", "CANCELLED"
+  createdAt    DateTime @default(now())
+  delivery     Delivery?
 }
 
 model Transport {

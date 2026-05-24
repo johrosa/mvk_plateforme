@@ -32,6 +32,8 @@ export default function LoginScreen({ navigation }) {
         navigation.navigate('Hub');
       } else if (data.user.role === 'STOCK_MANAGER') {
         navigation.navigate('Stock');
+      } else if (data.user.role === 'SALES_REP') {
+        navigation.navigate('SalesRep');
       } else {
         navigation.navigate('Produits');
       }

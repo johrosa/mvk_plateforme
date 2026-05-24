@@ -16,7 +16,13 @@ function Login({ onLogin }) {
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
       if (onLogin) onLogin();
-      if (data.user.role === 'FARMER' || data.user.role === 'HUB') navigate('/farmer');
+      const role = data.user.role;
+      if (role === 'ADMIN') navigate('/admin');
+      else if (role === 'STOCK_MANAGER') navigate('/stock');
+      else if (role === 'DRIVER') navigate('/driver');
+      else if (role === 'SALES_REP') navigate('/sales-rep');
+      else if (role === 'HUB') navigate('/hub-manager');
+      else if (role === 'FARMER') navigate('/farmer');
       else navigate('/marketplace');
     } catch (error) {
       setError('Identifiants incorrects');

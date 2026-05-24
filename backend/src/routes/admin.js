@@ -101,4 +101,21 @@ router.put('/deliveries/:id', isAdmin, async (req, res) => {
   }
 });
 
+router.put('/delivery-assign/:orderId', isAdmin, async (req, res) => {
+  try {
+    const { driverId, transportId } = req.body;
+    const updateData = {};
+    if (driverId !== undefined) updateData.driverId = driverId;
+    if (transportId !== undefined) updateData.transportId = transportId;
+
+    const delivery = await prisma.delivery.update({
+      where: { orderId: parseInt(req.params.orderId) },
+      data: updateData
+    });
+    res.json(delivery);
+  } catch (error) {
+    res.status(400).json({ error: 'Échec de l\'assignation' });
+  }
+});
+
 module.exports = router;
