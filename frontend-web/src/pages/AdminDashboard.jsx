@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api';
-import { Users, Truck, Warehouse, Package, Settings, ChevronRight } from 'lucide-react';
+import { Users, Truck, Warehouse, Package, Map as MapIcon, ChevronRight } from 'lucide-react';
+import MapDisplay from '../components/MapDisplay';
 
 function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('users');
@@ -66,6 +67,12 @@ function AdminDashboard() {
           className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition ${activeTab === 'orders' ? 'bg-green-600 text-white shadow-lg' : 'bg-white text-gray-600 hover:bg-gray-100'}`}
         >
           <Package size={20} /> <span className="font-semibold">Commandes</span>
+        </button>
+        <button
+          onClick={() => setActiveTab('map')}
+          className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition ${activeTab === 'map' ? 'bg-green-600 text-white shadow-lg' : 'bg-white text-gray-600 hover:bg-gray-100'}`}
+        >
+          <MapIcon size={20} /> <span className="font-semibold">Vue Carte</span>
         </button>
       </div>
 
@@ -158,6 +165,21 @@ function AdminDashboard() {
                 </tbody>
               </table>
             </div>
+          </div>
+        )}
+
+        {activeTab === 'map' && (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+              <MapIcon className="text-green-600" /> Géolocalisation des Acteurs & Stocks
+            </h2>
+            <MapDisplay
+              markers={[
+                ...users.filter(u => u.latitude).map(u => ({ lat: u.latitude, lng: u.longitude, title: u.name, description: u.role })),
+                ...storages.filter(s => s.latitude).map(s => ({ lat: s.latitude, lng: s.longitude, title: s.name, description: 'Entrepôt' })),
+                ...transports.filter(t => t.latitude).map(t => ({ lat: t.latitude, lng: t.longitude, title: `${t.vehicleType} (${t.plateNumber})`, description: 'Transport' }))
+              ]}
+            />
           </div>
         )}
 

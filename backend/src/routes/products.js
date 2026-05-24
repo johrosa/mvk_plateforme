@@ -46,7 +46,7 @@ router.post('/', authenticate, async (req, res) => {
 router.get('/', async (req, res) => {
   try {
     const products = await prisma.product.findMany({
-      include: { farmer: { select: { name: true } } }
+      include: { farmer: { select: { name: true, latitude: true, longitude: true } } }
     });
     res.json(products);
   } catch (error) {

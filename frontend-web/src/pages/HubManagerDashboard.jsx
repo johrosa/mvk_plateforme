@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api';
-import { Users, Package, MapPin, Send } from 'lucide-react';
+import { Users, Package, MapPin, Send, Map as MapIcon } from 'lucide-react';
+import MapDisplay from '../components/MapDisplay';
 
 function HubManagerDashboard() {
   const [products, setProducts] = useState([]);
@@ -67,6 +68,21 @@ function HubManagerDashboard() {
         </div>
 
         <div className="space-y-6">
+          <div className="bg-white rounded-3xl shadow-xl p-8">
+            <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
+              <MapIcon className="text-green-600" /> Localisation
+            </h2>
+            <MapDisplay
+              zoom={12}
+              markers={products.filter(p => p.farmer?.latitude).map(p => ({
+                lat: p.farmer.latitude,
+                lng: p.farmer.longitude,
+                title: p.sourceFarmerName || p.farmer.name,
+                description: 'Producteur local'
+              }))}
+            />
+          </div>
+
           <div className="bg-white rounded-3xl shadow-xl p-8">
             <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
               <Users className="text-green-600" /> Paysans Membres

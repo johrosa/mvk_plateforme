@@ -13,6 +13,8 @@ model User {
   password     String
   name         String?
   role         String   // "FARMER", "RETAILER", "HUB", "ADMIN", "DRIVER", "STOCK_MANAGER", or "SALES_REP"
+  latitude     Float?
+  longitude    Float?
   products     Product[]
   orders       Order[]
   placedOrders Order[]  @relation("OrderPlacer")
@@ -57,6 +59,8 @@ model Transport {
   capacity        Float
   status          String   // "AVAILABLE", "IN_TRANSIT", "MAINTENANCE"
   currentLocation String?
+  latitude        Float?
+  longitude       Float?
   deliveries      Delivery[]
 }
 
@@ -65,6 +69,8 @@ model Storage {
   name          String
   location      String
   capacity      Float
+  latitude      Float?
+  longitude     Float?
   currentLoad   Float    @default(0)
   records       StorageRecord[]
 }

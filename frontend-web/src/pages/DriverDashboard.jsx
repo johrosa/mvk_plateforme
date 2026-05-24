@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api';
-import { Truck, MapPin, CheckCircle, Clock } from 'lucide-react';
+import { Truck, MapPin, CheckCircle, Clock, Map as MapIcon } from 'lucide-react';
+import MapDisplay from '../components/MapDisplay';
 
 function DriverDashboard() {
   const [missions, setMissions] = useState([]);
@@ -20,7 +21,7 @@ function DriverDashboard() {
 
   const updateStatus = async (deliveryId, status) => {
     try {
-      await api.put(`/driver/delivery/${deliveryId}`, { status });
+      await api.put(`/driver/deliveries/${deliveryId}/status`, { status });
       fetchMissions();
     } catch (err) { alert('Erreur lors de la mise à jour'); }
   };
@@ -54,6 +55,15 @@ function DriverDashboard() {
                 <p className="text-xs text-gray-400">ID: #{m.id}</p>
               </div>
               <h3 className="text-xl font-bold mb-2">{m.order.product.name}</h3>
+              {m.order.buyer?.latitude && (
+                <div className="mb-4">
+                  <MapDisplay
+                    zoom={14}
+                    center={[m.order.buyer.latitude, m.order.buyer.longitude]}
+                    markers={[{ lat: m.order.buyer.latitude, lng: m.order.buyer.longitude, title: m.order.retailerName || m.order.buyer?.name, description: 'Point de livraison' }]}
+                  />
+                </div>
+              )}
               <div className="space-y-2 mb-6">
                 <div className="flex items-center gap-2 text-gray-600">
                   <MapPin size={16} className="text-orange-600" />

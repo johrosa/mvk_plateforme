@@ -27,7 +27,7 @@ const isAdmin = (req, res, next) => {
 router.get('/users', isAdmin, async (req, res) => {
   try {
     const users = await prisma.user.findMany({
-      select: { id: true, email: true, name: true, role: true }
+      select: { id: true, email: true, name: true, role: true, latitude: true, longitude: true }
     });
     res.json(users);
   } catch (error) {
@@ -37,10 +37,10 @@ router.get('/users', isAdmin, async (req, res) => {
 
 router.put('/users/:id', isAdmin, async (req, res) => {
   try {
-    const { name, role } = req.body;
+    const { name, role, latitude, longitude } = req.body;
     const user = await prisma.user.update({
       where: { id: parseInt(req.params.id) },
-      data: { name, role }
+      data: { name, role, latitude, longitude }
     });
     res.json(user);
   } catch (error) {
@@ -58,7 +58,10 @@ router.get('/transports', isAdmin, async (req, res) => {
 
 router.post('/transports', isAdmin, async (req, res) => {
   try {
-    const transport = await prisma.transport.create({ data: req.body });
+    const { vehicleType, plateNumber, capacity, status, latitude, longitude } = req.body;
+    const transport = await prisma.transport.create({
+      data: { vehicleType, plateNumber, capacity, status, latitude, longitude }
+    });
     res.status(201).json(transport);
   } catch (error) {
     res.status(400).json({ error: 'Échec de la création du transport' });
@@ -73,7 +76,10 @@ router.get('/storages', isAdmin, async (req, res) => {
 
 router.post('/storages', isAdmin, async (req, res) => {
   try {
-    const storage = await prisma.storage.create({ data: req.body });
+    const { name, location, capacity, latitude, longitude } = req.body;
+    const storage = await prisma.storage.create({
+      data: { name, location, capacity, latitude, longitude }
+    });
     res.status(201).json(storage);
   } catch (error) {
     res.status(400).json({ error: 'Échec de la création de l\'entrepôt' });
