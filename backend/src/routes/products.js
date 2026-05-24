@@ -27,18 +27,19 @@ router.post('/', authenticate, async (req, res) => {
     const product = await prisma.product.create({
       data: {
         name,
-        description,
-        price: parseFloat(price),
-        unit,
-        quantity: parseInt(quantity),
-        imageUrl,
+        description: description || "",
+        price: parseFloat(price) || 0,
+        unit: unit || "kg",
+        quantity: parseInt(quantity) || 0,
+        imageUrl: imageUrl || "",
         sourceFarmerName: req.user.role === 'HUB' ? sourceFarmerName : null,
         farmerId: req.user.userId,
       },
     });
     res.status(201).json(product);
   } catch (error) {
-    res.status(400).json({ error: 'Échec de la création du produit' });
+    console.error("Product creation error:", error);
+    res.status(400).json({ error: 'Échec de la création du produit', details: error.message });
   }
 });
 
