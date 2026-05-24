@@ -12,7 +12,7 @@ model User {
   email     String   @unique
   password  String
   name      String?
-  role      String   // "FARMER", "RETAILER", "HUB", or "ADMIN"
+  role      String   // "FARMER", "RETAILER", "HUB", "ADMIN", "DRIVER", or "STOCK_MANAGER"
   products  Product[]
   orders    Order[]
   deliveries Delivery[] @relation("DriverDeliveries")
@@ -47,12 +47,13 @@ model Order {
 }
 
 model Transport {
-  id            Int      @id @default(autoincrement())
-  vehicleType   String
-  plateNumber   String?
-  capacity      Float
-  status        String   // "AVAILABLE", "IN_TRANSIT", "MAINTENANCE"
-  deliveries    Delivery[]
+  id              Int      @id @default(autoincrement())
+  vehicleType     String
+  plateNumber     String?
+  capacity        Float
+  status          String   // "AVAILABLE", "IN_TRANSIT", "MAINTENANCE"
+  currentLocation String?
+  deliveries      Delivery[]
 }
 
 model Storage {

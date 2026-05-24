@@ -5,7 +5,9 @@ import Register from './pages/Register';
 import FarmerDashboard from './pages/FarmerDashboard';
 import Marketplace from './pages/Marketplace';
 import AdminDashboard from './pages/AdminDashboard';
-import { LogOut, Home, LayoutDashboard, ShoppingCart, ShieldCheck } from 'lucide-react';
+import StockDashboard from './pages/StockDashboard';
+import HubManagerDashboard from './pages/HubManagerDashboard';
+import { LogOut, Home, LayoutDashboard, ShoppingCart, ShieldCheck, Warehouse, MapPin } from 'lucide-react';
 
 function App() {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
@@ -37,6 +39,18 @@ function App() {
                         Admin
                       </Link>
                     )}
+                    {user.role === 'HUB' && (
+                      <Link to="/hub-manager" className="text-gray-600 hover:text-green-600 font-medium flex items-center gap-1">
+                        <MapPin size={20} />
+                        Hub
+                      </Link>
+                    )}
+                    {user.role === 'STOCK_MANAGER' && (
+                      <Link to="/stock" className="text-gray-600 hover:text-green-600 font-medium flex items-center gap-1">
+                        <Warehouse size={20} />
+                        Stocks
+                      </Link>
+                    )}
                     {(user.role === 'FARMER' || user.role === 'HUB') ? (
                       <Link to="/farmer" className="text-gray-600 hover:text-green-600 font-medium flex items-center gap-1">
                         <LayoutDashboard size={20} />
@@ -66,6 +80,8 @@ function App() {
             <Route path="/farmer" element={<FarmerDashboard />} />
             <Route path="/marketplace" element={<Marketplace />} />
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/stock" element={<StockDashboard />} />
+            <Route path="/hub-manager" element={<HubManagerDashboard />} />
             <Route path="/" element={
               <div className="text-center py-20">
                 <h1 className="text-5xl font-extrabold text-gray-900 mb-4">Connecter les paysans aux commerçants</h1>

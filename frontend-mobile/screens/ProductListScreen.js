@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, ActivityIndicator, Platform, Image, SafeAreaView } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, ActivityIndicator, Platform, Image, SafeAreaView, Alert } from 'react-native';
 import axios from 'axios';
 
 const API_URL = Platform.OS === 'android' ? 'http://10.0.2.2:3000/api' : 'http://localhost:3000/api';
@@ -24,10 +24,23 @@ export default function ProductListScreen({ navigation }) {
   const handleOrder = (product) => {
     Alert.alert(
       'Confirmation',
-      `Voulez-vous commander : ${product.name} ?`,
+      `Voulez-vous commander 1 unité de ${product.name} ?`,
       [
         { text: 'Annuler', style: 'cancel' },
-        { text: 'Commander', onPress: () => Alert.alert('Succès', 'Votre commande a été envoyée !') }
+        {
+          text: 'Commander',
+          onPress: async () => {
+            try {
+              await axios.post(`${API_URL}/orders`, {
+                productId: product.id,
+                quantity: 1
+              });
+              Alert.alert('Succès', 'Votre commande a été enregistrée !');
+            } catch (error) {
+              Alert.alert('Erreur', 'Impossible de passer la commande');
+            }
+          }
+        }
       ]
     );
   };

@@ -65,6 +65,8 @@ function Register() {
             <option value="RETAILER">Commerçant</option>
             <option value="FARMER">Paysan</option>
             <option value="HUB">Hub de collecte</option>
+            <option value="DRIVER">Transporteur / Chauffeur</option>
+            <option value="STOCK_MANAGER">Gestionnaire de Stocks</option>
             <option value="ADMIN">Administrateur (Démo)</option>
           </select>
         </div>

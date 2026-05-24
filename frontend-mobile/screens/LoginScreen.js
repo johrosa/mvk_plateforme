@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import axios from 'axios';
+import * as SecureStore from 'expo-secure-store';
 
 const API_URL = Platform.OS === 'android' ? 'http://10.0.2.2:3000/api' : 'http://localhost:3000/api';
 
@@ -17,8 +18,23 @@ export default function LoginScreen({ navigation }) {
     setLoading(true);
     try {
       const { data } = await axios.post(`${API_URL}/auth/login`, { email, password });
-      // In a real app we'd save the token in SecureStore
-      navigation.navigate('Produits');
+
+      // Sauvegarder le token et les infos utilisateur
+      await SecureStore.setItemAsync('userToken', data.token);
+      await SecureStore.setItemAsync('userRole', data.user.role);
+
+      // Configurer axios pour les futurs appels
+      axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
+
+      if (data.user.role === 'DRIVER') {
+        navigation.navigate('Chauffeur');
+      } else if (data.user.role === 'HUB') {
+        navigation.navigate('Hub');
+      } else if (data.user.role === 'STOCK_MANAGER') {
+        navigation.navigate('Stock');
+      } else {
+        navigation.navigate('Produits');
+      }
     } catch (error) {
       Alert.alert('Erreur', 'Identifiants incorrects');
     } finally {
