@@ -4,7 +4,8 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import FarmerDashboard from './pages/FarmerDashboard';
 import Marketplace from './pages/Marketplace';
-import { LogOut, Home, LayoutDashboard, ShoppingCart } from 'lucide-react';
+import AdminDashboard from './pages/AdminDashboard';
+import { LogOut, Home, LayoutDashboard, ShoppingCart, ShieldCheck } from 'lucide-react';
 
 function App() {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
@@ -30,17 +31,23 @@ function App() {
                   </>
                 ) : (
                   <>
+                    {user.role === 'ADMIN' && (
+                      <Link to="/admin" className="text-gray-600 hover:text-green-600 font-medium flex items-center gap-1">
+                        <ShieldCheck size={20} />
+                        Admin
+                      </Link>
+                    )}
                     {(user.role === 'FARMER' || user.role === 'HUB') ? (
                       <Link to="/farmer" className="text-gray-600 hover:text-green-600 font-medium flex items-center gap-1">
                         <LayoutDashboard size={20} />
                         Tableau de Bord
                       </Link>
-                    ) : (
+                    ) : user.role === 'RETAILER' ? (
                       <Link to="/marketplace" className="text-gray-600 hover:text-green-600 font-medium flex items-center gap-1">
                         <ShoppingCart size={20} />
                         Marché
                       </Link>
-                    )}
+                    ) : null}
                     <button onClick={logout} className="text-gray-600 hover:text-red-600 flex items-center gap-1">
                       <LogOut size={20} />
                       Déconnexion
@@ -58,6 +65,7 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/farmer" element={<FarmerDashboard />} />
             <Route path="/marketplace" element={<Marketplace />} />
+            <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/" element={
               <div className="text-center py-20">
                 <h1 className="text-5xl font-extrabold text-gray-900 mb-4">Connecter les paysans aux commerçants</h1>

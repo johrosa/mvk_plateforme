@@ -65,6 +65,7 @@ function Register() {
             <option value="RETAILER">Commerçant</option>
             <option value="FARMER">Paysan</option>
             <option value="HUB">Hub de collecte</option>
+            <option value="ADMIN">Administrateur (Démo)</option>
           </select>
         </div>
         <button type="submit" className="w-full bg-green-600 text-white py-3 rounded-xl font-bold hover:bg-green-700 transition shadow-md">

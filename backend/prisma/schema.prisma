@@ -12,9 +12,10 @@ model User {
   email     String   @unique
   password  String
   name      String?
-  role      String   // "FARMER", "RETAILER", or "HUB"
+  role      String   // "FARMER", "RETAILER", "HUB", or "ADMIN"
   products  Product[]
   orders    Order[]
+  deliveries Delivery[] @relation("DriverDeliveries")
 }
 
 model Product {
@@ -24,11 +25,12 @@ model Product {
   price            Float
   unit             String
   quantity         Int
-  imageUrl         String?  // New field for product photo
-  sourceFarmerName String?  // Used when a HUB adds products for a farmer without a smartphone
+  imageUrl         String?
+  sourceFarmerName String?
   farmer           User     @relation(fields: [farmerId], references: [id])
   farmerId         Int
   orders           Order[]
+  storageRecords   StorageRecord[]
 }
 
 model Order {
@@ -41,4 +43,47 @@ model Order {
   total     Float
   status    String   // "PENDING", "COMPLETED", "CANCELLED"
   createdAt DateTime @default(now())
+  delivery  Delivery?
+}
+
+model Transport {
+  id            Int      @id @default(autoincrement())
+  vehicleType   String
+  plateNumber   String?
+  capacity      Float
+  status        String   // "AVAILABLE", "IN_TRANSIT", "MAINTENANCE"
+  deliveries    Delivery[]
+}
+
+model Storage {
+  id            Int      @id @default(autoincrement())
+  name          String
+  location      String
+  capacity      Float
+  currentLoad   Float    @default(0)
+  records       StorageRecord[]
+}
+
+model StorageRecord {
+  id            Int      @id @default(autoincrement())
+  storage       Storage  @relation(fields: [storageId], references: [id])
+  storageId     Int
+  product       Product  @relation(fields: [productId], references: [id])
+  productId     Int
+  quantity      Int
+  entryDate     DateTime @default(now())
+  exitDate      DateTime?
+}
+
+model Delivery {
+  id            Int      @id @default(autoincrement())
+  order         Order    @relation(fields: [orderId], references: [id])
+  orderId       Int      @unique
+  transport     Transport? @relation(fields: [transportId], references: [id])
+  transportId   Int?
+  driver        User?    @relation("DriverDeliveries", fields: [driverId], references: [id])
+  driverId      Int?
+  status        String   // "PENDING", "PICKED_UP", "DELIVERED"
+  estimatedDate DateTime?
+  actualDate    DateTime?
 }

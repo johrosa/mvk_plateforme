@@ -30,7 +30,14 @@ router.post('/', authenticate, async (req, res) => {
     const total = product.price * quantity;
     const order = await prisma.$transaction([
       prisma.order.create({
-        data: { productId, buyerId: req.user.userId, quantity, total, status: 'PENDING' },
+        data: {
+          productId,
+          buyerId: req.user.userId,
+          quantity,
+          total,
+          status: 'PENDING',
+          delivery: { create: { status: 'PENDING' } }
+        },
       }),
       prisma.product.update({
         where: { id: productId },
