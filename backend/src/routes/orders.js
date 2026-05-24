@@ -19,19 +19,38 @@ const authenticate = (req, res, next) => {
 };
 
 router.post('/', authenticate, async (req, res) => {
-  if (req.user.role !== 'RETAILER') return res.status(403).json({ error: 'Non autorisé' });
+  if (req.user.role !== 'RETAILER' && req.user.role !== 'SALES_REP') {
+    return res.status(403).json({ error: 'Non autorisé' });
+  }
+
   try {
-    const { productId, quantity } = req.body;
+    const { productId, quantity, retailerName, buyerId } = req.body;
     const product = await prisma.product.findUnique({ where: { id: productId } });
     if (!product || product.quantity < quantity) {
       return res.status(400).json({ error: 'Produit non disponible ou quantité insuffisante' });
     }
 
     const total = product.price * quantity;
+
+    // Déterminer qui passe la commande
+    const orderData = {
+      productId,
+      quantity,
+      total,
+      status: 'PENDING',
+      delivery: { create: { status: 'PENDING' } }
+    };
+
+    if (req.user.role === 'SALES_REP') {
+      orderData.placedById = req.user.userId;
+      orderData.retailerName = retailerName;
+      if (buyerId) orderData.buyerId = buyerId;
+    } else {
+      orderData.buyerId = req.user.userId;
+    }
+
     const order = await prisma.$transaction([
-      prisma.order.create({
-        data: { productId, buyerId: req.user.userId, quantity, total, status: 'PENDING' },
-      }),
+      prisma.order.create({ data: orderData }),
       prisma.product.update({
         where: { id: productId },
         data: { quantity: product.quantity - quantity },
@@ -39,17 +58,31 @@ router.post('/', authenticate, async (req, res) => {
     ]);
     res.status(201).json(order[0]);
   } catch (error) {
+    console.error(error);
     res.status(400).json({ error: 'Échec de la commande' });
   }
 });
 
 router.get('/', authenticate, async (req, res) => {
   try {
+    let where = {};
+    if (req.user.role === 'FARMER') {
+      where = { product: { farmerId: req.user.userId } };
+    } else if (req.user.role === 'SALES_REP') {
+      where = { placedById: req.user.userId };
+    } else if (req.user.role === 'ADMIN') {
+      where = {}; // Admin voit tout
+    } else {
+      where = { buyerId: req.user.userId };
+    }
+
     const orders = await prisma.order.findMany({
-      where: req.user.role === 'FARMER'
-        ? { product: { farmerId: req.user.userId } }
-        : { buyerId: req.user.userId },
-      include: { product: true, buyer: { select: { name: true } } }
+      where,
+      include: {
+        product: true,
+        buyer: { select: { name: true } },
+        placedBy: { select: { name: true } }
+      }
     });
     res.json(orders);
   } catch (error) {

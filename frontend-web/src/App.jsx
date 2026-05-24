@@ -4,6 +4,12 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import FarmerDashboard from './pages/FarmerDashboard';
 import Marketplace from './pages/Marketplace';
+import AdminDashboard from './pages/AdminDashboard';
+import StockDashboard from './pages/StockDashboard';
+import HubManagerDashboard from './pages/HubManagerDashboard';
+import SalesRepDashboard from './pages/SalesRepDashboard';
+import DriverDashboard from './pages/DriverDashboard';
+import { LogOut, Home, LayoutDashboard, ShoppingCart, ShieldCheck, Warehouse, MapPin, Users, Truck } from 'lucide-react';
 
 function App() {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
@@ -11,19 +17,102 @@ function App() {
 
   return (
     <Router>
-      <nav>
-        {!user ? (<> <Link to="/login">Connexion</Link> | <Link to="/register">Inscription</Link> </>) : (<>
-          {(user.role === 'FARMER' || user.role === 'HUB') ? <Link to="/farmer">Tableau de Bord</Link> : <Link to="/marketplace">Marché</Link>}
-          | <button onClick={logout}>Déconnexion</button>
-        </>)}
-      </nav>
-      <Routes>
-        <Route path="/login" element={<Login onLogin={() => setUser(JSON.parse(localStorage.getItem('user')))} />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/farmer" element={<FarmerDashboard />} />
-        <Route path="/marketplace" element={<Marketplace />} />
-        <Route path="/" element={<h2>Bienvenue sur MVK Plateforme</h2>} />
-      </Routes>
+      <div className="min-h-screen bg-gray-50 text-gray-900">
+        <nav className="bg-white shadow-sm border-b sticky top-0 z-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between h-16 items-center">
+              <div className="flex items-center">
+                <Link to="/" className="text-2xl font-bold text-green-600 flex items-center gap-2">
+                  <Home size={24} />
+                  <span>MVK Plateforme</span>
+                </Link>
+              </div>
+              <div className="flex items-center gap-6">
+                {!user ? (
+                  <>
+                    <Link to="/login" className="text-gray-600 hover:text-green-600 font-medium">Connexion</Link>
+                    <Link to="/register" className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">Inscription</Link>
+                  </>
+                ) : (
+                  <>
+                    {user.role === 'ADMIN' && (
+                      <Link to="/admin" className="text-gray-600 hover:text-green-600 font-medium flex items-center gap-1">
+                        <ShieldCheck size={20} />
+                        Admin
+                      </Link>
+                    )}
+                    {user.role === 'HUB' && (
+                      <Link to="/hub-manager" className="text-gray-600 hover:text-green-600 font-medium flex items-center gap-1">
+                        <MapPin size={20} />
+                        Hub
+                      </Link>
+                    )}
+                    {user.role === 'STOCK_MANAGER' && (
+                      <Link to="/stock" className="text-gray-600 hover:text-green-600 font-medium flex items-center gap-1">
+                        <Warehouse size={20} />
+                        Stocks
+                      </Link>
+                    )}
+                    {user.role === 'SALES_REP' && (
+                      <Link to="/sales-rep" className="text-gray-600 hover:text-green-600 font-medium flex items-center gap-1">
+                        <Users size={20} />
+                        Terrain
+                      </Link>
+                    )}
+                    {user.role === 'DRIVER' && (
+                      <Link to="/driver" className="text-gray-600 hover:text-green-600 font-medium flex items-center gap-1">
+                        <Truck size={20} />
+                        Livraisons
+                      </Link>
+                    )}
+                    {(user.role === 'FARMER' || user.role === 'HUB') ? (
+                      <Link to="/farmer" className="text-gray-600 hover:text-green-600 font-medium flex items-center gap-1">
+                        <LayoutDashboard size={20} />
+                        Tableau de Bord
+                      </Link>
+                    ) : user.role === 'RETAILER' ? (
+                      <Link to="/marketplace" className="text-gray-600 hover:text-green-600 font-medium flex items-center gap-1">
+                        <ShoppingCart size={20} />
+                        Marché
+                      </Link>
+                    ) : null}
+                    <button onClick={logout} className="text-gray-600 hover:text-red-600 flex items-center gap-1">
+                      <LogOut size={20} />
+                      Déconnexion
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </nav>
+
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <Routes>
+            <Route path="/login" element={<Login onLogin={() => setUser(JSON.parse(localStorage.getItem('user')))} />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/farmer" element={<FarmerDashboard />} />
+            <Route path="/marketplace" element={<Marketplace />} />
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/stock" element={<StockDashboard />} />
+            <Route path="/hub-manager" element={<HubManagerDashboard />} />
+            <Route path="/sales-rep" element={<SalesRepDashboard />} />
+            <Route path="/driver" element={<DriverDashboard />} />
+            <Route path="/" element={
+              <div className="text-center py-20">
+                <h1 className="text-5xl font-extrabold text-gray-900 mb-4">Connecter les paysans aux commerçants</h1>
+                <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
+                  Une plateforme solidaire pour favoriser les circuits courts et soutenir l'agriculture locale.
+                </p>
+                <div className="flex justify-center gap-4">
+                  <Link to="/register" className="bg-green-600 text-white px-8 py-3 rounded-xl text-lg font-semibold hover:bg-green-700 transition shadow-lg">Commencer</Link>
+                  <Link to="/marketplace" className="bg-white text-green-600 border border-green-600 px-8 py-3 rounded-xl text-lg font-semibold hover:bg-green-50 transition">Voir le marché</Link>
+                </div>
+              </div>
+            } />
+          </Routes>
+        </main>
+      </div>
     </Router>
   );
 }
